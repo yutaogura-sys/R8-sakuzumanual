@@ -386,25 +386,25 @@
 
 <div class="search-area">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="質問を入力してください（例：路面表示のルールは？、6kWのブレーカーサイズは？）" autocomplete="off">
-    <button onclick="doSearch()">検索</button>
+    <input type="text" id="searchInput" placeholder="質問を入力してください（例：路面表示のルールは？、6kWのブレーカーサイズは？）" autocomplete="off" aria-label="マニュアル検索">
+    <button type="button" onclick="doSearch()" aria-label="検索する">検索</button>
   </div>
   <div class="quick-tags">
-    <span class="quick-tag" onclick="quickSearch(this)">目的地と基礎の違い</span>
-    <span class="quick-tag" onclick="quickSearch(this)">路面表示</span>
-    <span class="quick-tag" onclick="quickSearch(this)">車室の選定基準</span>
-    <span class="quick-tag" onclick="quickSearch(this)">ブレーカー仕様</span>
-    <span class="quick-tag" onclick="quickSearch(this)">配管の選び方</span>
-    <span class="quick-tag" onclick="quickSearch(this)">リプレイス案件</span>
-    <span class="quick-tag" onclick="quickSearch(this)">チェックリスト 平面図</span>
-    <span class="quick-tag" onclick="quickSearch(this)">補助金とは</span>
-    <span class="quick-tag" onclick="quickSearch(this)">LB ロードバランシング</span>
-    <span class="quick-tag" onclick="quickSearch(this)">建柱スキーム</span>
-    <span class="quick-tag" onclick="quickSearch(this)">配線配管長の標準</span>
-    <span class="quick-tag" onclick="quickSearch(this)">案内板</span>
-    <span class="quick-tag" onclick="quickSearch(this)">分電盤の型式</span>
-    <span class="quick-tag" onclick="quickSearch(this)">車止め 新設</span>
-    <span class="quick-tag" onclick="quickSearch(this)">現調報告書 優先順位</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">目的地と基礎の違い</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">路面表示</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">車室の選定基準</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">ブレーカー仕様</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">配管の選び方</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">リプレイス案件</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">チェックリスト 平面図</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">補助金とは</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">LB ロードバランシング</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">建柱スキーム</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">配線配管長の標準</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">案内板</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">分電盤の型式</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">車止め 新設</span>
+    <span class="quick-tag" role="button" tabindex="0" onclick="quickSearch(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();quickSearch(this);}">現調報告書 優先順位</span>
   </div>
 </div>
 
@@ -416,7 +416,7 @@
   </div>
 </div>
 
-<button class="toc-toggle" onclick="toggleTOC()" title="目次を開く">&#9776;</button>
+<button class="toc-toggle" onclick="toggleTOC()" title="目次を開く" aria-label="目次を開く" type="button">&#9776;</button>
 <div class="toc-overlay" id="tocOverlay" onclick="toggleTOC()"></div>
 <div class="toc-panel" id="tocPanel">
   <h3>目次 ─ 全ページ一覧</h3>
@@ -934,6 +934,8 @@ function tokenize(text) {
     .replace(/(..)が(?=..)/g, '$1 ')
     .replace(/(..)で(?=..)/g, '$1 ')
     .replace(/(..)から(?=..)/g, '$1 ')
+    .replace(/(..)まで(?=..)/g, '$1 ')
+    .replace(/(..)より(?=..)/g, '$1 ')
     .trim();
   const tokens = text.split(/\s+/).filter(t => t.length > 0);
   // Also add the original query as a single token for phrase matching
@@ -1024,20 +1026,17 @@ function escapeRegex(str) {
 }
 
 function highlightText(html, tokens) {
-  let result = html;
-  tokens.forEach(token => {
-    if (token.length < 2) return;
-    const regex = new RegExp(`(?<![<\\/\\w])${escapeRegex(token)}(?![\\w>])`, 'gi');
-    // Only highlight in text nodes, not inside HTML tags
-    result = result.replace(/>([^<]+)</g, (match, text) => {
-      const highlighted = text.replace(
-        new RegExp(escapeRegex(token), 'gi'),
-        '<span class="highlight">$&</span>'
-      );
-      return '>' + highlighted + '<';
-    });
+  if (!tokens || tokens.length === 0) return html;
+  // Build a single combined regex for all tokens to avoid re-highlighting
+  const validTokens = tokens.filter(t => t.length >= 2);
+  if (validTokens.length === 0) return html;
+  const combined = validTokens.map(escapeRegex).join('|');
+  const tokenRegex = new RegExp(combined, 'gi');
+  // Only highlight in text nodes (between > and <), not inside HTML tags
+  return html.replace(/>([^<]+)</g, (match, text) => {
+    const highlighted = text.replace(tokenRegex, '<span class="highlight">$&</span>');
+    return '>' + highlighted + '<';
   });
-  return result;
 }
 
 function getChapter(num) {
@@ -1079,26 +1078,30 @@ function doSearch() {
   renderResults(results, tokens);
 }
 
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function renderResults(results, tokens, label) {
   const container = document.getElementById('results');
   const maxResults = 8;
   const shown = results.slice(0, maxResults);
   const countLabel = label || `${results.length}件中 ${shown.length}件を表示（関連度順）`;
 
-  let html = `<div class="result-count">${countLabel}</div>`;
+  let html = `<div class="result-count">${escapeHtml(countLabel)}</div>`;
 
   shown.forEach(r => {
     const ch = getChapter(r.chapter);
-    const chLabel = r.chapter > 0 ? `CHAPTER ${r.chapter} ─ ${ch.title}` : 'まとめ';
+    const chLabel = r.chapter > 0 ? `CHAPTER ${r.chapter} ─ ${escapeHtml(ch.title)}` : 'まとめ';
     const content = highlightText(r.content, tokens || []);
 
     html += `
       <div class="result-card">
-        <div class="result-header" onclick="this.parentElement.querySelector('.result-body').style.display = this.parentElement.querySelector('.result-body').style.display === 'none' ? 'block' : 'none'">
+        <div class="result-header" role="button" tabindex="0" onclick="this.parentElement.querySelector('.result-body').style.display = this.parentElement.querySelector('.result-body').style.display === 'none' ? 'block' : 'none'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
           <div class="result-badge" style="background:${ch.color}">P${r.page}</div>
           <div class="result-meta">
             <div class="result-chapter" style="color:${ch.color}">${chLabel}</div>
-            <div class="result-title">${r.title}</div>
+            <div class="result-title">${escapeHtml(r.title)}</div>
           </div>
           <div class="result-score">関連度 ${r.score}</div>
         </div>
@@ -1123,9 +1126,10 @@ document.getElementById('searchInput').addEventListener('keydown', e => {
 });
 
 // TOC
-function toggleTOC() {
-  document.getElementById('tocPanel').classList.toggle('open');
-  document.getElementById('tocOverlay').classList.toggle('open');
+function toggleTOC(forceClose) {
+  const method = forceClose ? 'remove' : 'toggle';
+  document.getElementById('tocPanel').classList[method]('open');
+  document.getElementById('tocOverlay').classList[method]('open');
 }
 
 function buildTOC() {
@@ -1133,18 +1137,18 @@ function buildTOC() {
   let html = '';
   CHAPTERS.forEach(ch => {
     html += `<div class="toc-chapter">
-      <div class="toc-chapter-title" onclick="document.getElementById('searchInput').value=''; quickSearchChapter(${ch.num})">
+      <div class="toc-chapter-title" role="button" tabindex="0" onclick="document.getElementById('searchInput').value=''; quickSearchChapter(${ch.num})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
         <span class="toc-chapter-dot" style="background:${ch.color}"></span>
-        Chapter ${ch.num}: ${ch.title}
+        Chapter ${ch.num}: ${escapeHtml(ch.title)}
       </div>`;
     SECTIONS.filter(s => s.chapter === ch.num).forEach(s => {
-      html += `<div class="toc-section" onclick="quickSearchSection('${s.title.replace(/'/g, "\\'")}')">&bull; P${s.page} ${s.title}</div>`;
+      html += `<div class="toc-section" role="button" tabindex="0" onclick="quickSearchSection('${s.title.replace(/'/g, "\\'").replace(/\\/g, '\\\\')}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">&bull; P${s.page} ${escapeHtml(s.title)}</div>`;
     });
     html += '</div>';
   });
   // まとめ
   html += `<div class="toc-chapter">
-    <div class="toc-chapter-title" onclick="quickSearchSection('作図のポイントまとめ')">
+    <div class="toc-chapter-title" role="button" tabindex="0" onclick="quickSearchSection('作図のポイントまとめ')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
       <span class="toc-chapter-dot" style="background:#1B2A4A"></span>
       まとめ（7箇条）
     </div>
@@ -1154,10 +1158,11 @@ function buildTOC() {
 
 function quickSearchChapter(num) {
   const ch = CHAPTERS.find(c => c.num === num);
+  if (!ch) return;
   const sections = SECTIONS.filter(s => s.chapter === num).map(s => ({ ...s, score: 100 }));
   document.getElementById('searchInput').value = '';
   renderResults(sections, [], `Chapter ${num} ─ ${ch.title}（${sections.length}ページ）`);
-  toggleTOC();
+  toggleTOC(true);
 }
 
 function quickSearchSection(title) {
@@ -1166,7 +1171,7 @@ function quickSearchSection(title) {
     document.getElementById('searchInput').value = '';
     renderResults([{ ...section, score: 100 }], [], `${section.title}`);
   }
-  toggleTOC();
+  toggleTOC(true);
 }
 
 buildTOC();
