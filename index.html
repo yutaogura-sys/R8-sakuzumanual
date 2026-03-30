@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R8-1 作図マニュアル検索ツール</title>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --blue: #2563EB;
+    --teal: #0D9488;
+    --green: #16A34A;
+    --orange: #EA580C;
+    --red: #DC2626;
+    --purple: #7C3AED;
+    --dark: #1E293B;
+    --gray: #64748B;
+    --light: #F8FAFC;
+    --border: #E2E8F0;
+    --accent: #0EA5E9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Meiryo UI', 'Yu Gothic UI', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, #243B6A 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(27,42,74,0.3);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+  .header-sub {
+    font-size: 0.8rem;
+    color: #94A3B8;
+  }
+
+  /* Search */
+  .search-area {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 1rem;
+  }
+  .search-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .search-box input {
+    flex: 1;
+    padding: 0.85rem 1.2rem;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: white;
+  }
+  .search-box input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  .search-box input::placeholder {
+    color: #94A3B8;
+  }
+  .search-box button {
+    padding: 0.85rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .search-box button:hover { background: #1D4ED8; }
+
+  /* Quick chips */
+  .quick-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .quick-tag {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray);
+  }
+  .quick-tag:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
+  /* Results */
+  .results-area {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+  }
+  .result-count {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    padding: 0 0.2rem;
+  }
+  .result-card {
+    background: white;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .result-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.2rem 0.75rem;
+    cursor: pointer;
+  }
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .result-meta {
+    flex: 1;
+  }
+  .result-chapter {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
+  }
+  .result-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--dark);
+  }
+  .result-score {
+    font-size: 0.7rem;
+    color: var(--gray);
+    background: var(--light);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .result-body {
+    padding: 0 1.2rem 1.2rem;
+    font-size: 0.9rem;
+    color: #374151;
+  }
+  .result-body .section-label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 0.8rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .result-body .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+  }
+  .result-body ul {
+    padding-left: 1.2rem;
+    margin: 0.2rem 0;
+  }
+  .result-body li {
+    margin: 0.2rem 0;
+    font-size: 0.87rem;
+  }
+  .result-body .highlight {
+    background: #FEF08A;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  .result-body .note-box {
+    background: #FEF2F2;
+    border-left: 3px solid var(--red);
+    padding: 0.5rem 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+  }
+  .result-body .tip-box {
+    background: #F0FDF4;
+    border-left: 3px solid var(--green);
+    padding: 0.5rem 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+  }
+  .result-body .info-box {
+    background: #EFF6FF;
+    border-left: 3px solid var(--blue);
+    padding: 0.5rem 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+  }
+  .result-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    font-size: 0.82rem;
+  }
+  .result-body th {
+    background: var(--navy);
+    color: white;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  .result-body td {
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-body tr:nth-child(even) td {
+    background: #F8FAFC;
+  }
+
+  /* Welcome state */
+  .welcome {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+  }
+  .welcome-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  .welcome h2 {
+    color: var(--navy);
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .welcome p {
+    max-width: 500px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+  }
+
+  /* TOC sidebar */
+  .toc-toggle {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .toc-toggle:hover { background: var(--blue); }
+
+  .toc-panel {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 380px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    z-index: 300;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+  .toc-panel.open { right: 0; }
+  .toc-panel h3 {
+    font-size: 1.1rem;
+    color: var(--navy);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .toc-chapter {
+    margin-bottom: 1rem;
+  }
+  .toc-chapter-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--navy);
+    cursor: pointer;
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .toc-chapter-title:hover { color: var(--blue); }
+  .toc-chapter-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .toc-section {
+    padding-left: 1.2rem;
+    font-size: 0.8rem;
+    color: var(--gray);
+    cursor: pointer;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+  .toc-section:hover { color: var(--blue); }
+  .toc-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 250;
+  }
+  .toc-overlay.open { display: block; }
+
+  @media (max-width: 768px) {
+    .header { padding: 1rem; }
+    .search-area, .results-area { padding-left: 1rem; padding-right: 1rem; }
+    .search-box { flex-direction: column; }
+    .search-box button { width: 100%; }
+    .toc-panel { width: 85vw; right: -85vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>R8-1 交付申請図面 作図マニュアル 検索ツール</h1>
+    <div class="header-sub">ENECHANGE EVラボ株式会社 | マニュアルに質問を投げると該当ページ・回答を表示します</div>
+  </div>
+</div>
+
+<div class="search-area">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="質問を入力してください（例：路面表示のルールは？、6kWのブレーカーサイズは？）" autocomplete="off">
+    <button onclick="doSearch()">検索</button>
+  </div>
+  <div class="quick-tags">
+    <span class="quick-tag" onclick="quickSearch(this)">目的地と基礎の違い</span>
+    <span class="quick-tag" onclick="quickSearch(this)">路面表示</span>
+    <span class="quick-tag" onclick="quickSearch(this)">車室の選定基準</span>
+    <span class="quick-tag" onclick="quickSearch(this)">ブレーカー仕様</span>
+    <span class="quick-tag" onclick="quickSearch(this)">配管の選び方</span>
+    <span class="quick-tag" onclick="quickSearch(this)">リプレイス案件</span>
+    <span class="quick-tag" onclick="quickSearch(this)">チェックリスト 平面図</span>
+    <span class="quick-tag" onclick="quickSearch(this)">補助金とは</span>
+    <span class="quick-tag" onclick="quickSearch(this)">LB ロードバランシング</span>
+    <span class="quick-tag" onclick="quickSearch(this)">建柱スキーム</span>
+    <span class="quick-tag" onclick="quickSearch(this)">配線配管長の標準</span>
+    <span class="quick-tag" onclick="quickSearch(this)">案内板</span>
+    <span class="quick-tag" onclick="quickSearch(this)">分電盤の型式</span>
+    <span class="quick-tag" onclick="quickSearch(this)">車止め 新設</span>
+    <span class="quick-tag" onclick="quickSearch(this)">現調報告書 優先順位</span>
+  </div>
+</div>
+
+<div class="results-area" id="results">
+  <div class="welcome">
+    <div class="welcome-icon">&#128270;</div>
+    <h2>マニュアルに質問してみましょう</h2>
+    <p>キーワードや質問文を入力すると、該当するページの内容を関連度順に表示します。上のタグをクリックするとすぐに検索できます。</p>
+  </div>
+</div>
+
+<button class="toc-toggle" onclick="toggleTOC()" title="目次を開く">&#9776;</button>
+<div class="toc-overlay" id="tocOverlay" onclick="toggleTOC()"></div>
+<div class="toc-panel" id="tocPanel">
+  <h3>目次 ─ 全ページ一覧</h3>
+  <div id="tocContent"></div>
+</div>
+
+<script>
+// ===========================================================
+// MANUAL DATA - All content structured for search
+// ===========================================================
+const CHAPTERS = [
+  { num: 1, title: "この仕事について", color: "#2563EB" },
+  { num: 2, title: "設計の基本ルール", color: "#0D9488" },
+  { num: 3, title: "図面① 設置場所見取図", color: "#16A34A" },
+  { num: 4, title: "図面② 平面図", color: "#EA580C" },
+  { num: 5, title: "図面③ 配線ルート図", color: "#7C3AED" },
+  { num: 6, title: "図面④ 電気系統図", color: "#DC2626" },
+  { num: 7, title: "特殊ケース・応用編", color: "#64748B" },
+  { num: 8, title: "仕様クイックリファレンス", color: "#1B2A4A" },
+];
+
+const SECTIONS = [
+  // ===== CHAPTER 1 =====
+  {
+    chapter: 1, page: 3, title: "EV充電インフラ補助金とは？",
+    keywords: ["補助金", "EV", "充電", "インフラ", "NEV", "交付申請", "制度", "概要", "とは", "なに", "何"],
+    content: `
+      <p>国がEV（電気自動車）の普及を進めるため、ホテル・マンション・商業施設などに充電設備を設置する費用の一部を補助する制度です。補助金を受け取るには、NEV（補助金審査機関）へ「交付申請」を行い、設置工事の計画を示す<strong>図面を提出</strong>する必要があります。</p>
+      <div class="section-label">充電の2つのタイプ</div>
+      <table>
+        <tr><th></th><th>目的地充電</th><th>基礎充電</th></tr>
+        <tr><td><strong>施設</strong></td><td>ホテル・商業施設・レストラン等</td><td>マンション・事業所・月極駐車場等</td></tr>
+        <tr><td><strong>用途</strong></td><td>お客様が滞在中に充電</td><td>住人・従業員が日常的に充電</td></tr>
+        <tr><td><strong>充電器</strong></td><td>6kW（Zerova製 / ABB製）</td><td>3kW コンセント（Panasonic製）</td></tr>
+        <tr><td><strong>路面表示</strong></td><td>必須（EV200Vマーク）</td><td>不要</td></tr>
+        <tr><td><strong>案内板</strong></td><td>必要</td><td>不要</td></tr>
+        <tr><td><strong>上限</strong></td><td>200以下→4口、201以上→2%(最大50口)</td><td>ケーブル→10%(最大10口)、コンセント→収容台数以下(最大20口)</td></tr>
+      </table>
+      <div class="note-box"><strong>POINT:</strong> この2つのタイプで図面の書き方が異なります。案件がどちらに該当するかを<strong>必ず最初に確認</strong>してください。</div>
+    `
+  },
+  {
+    chapter: 1, page: 4, title: "作成する4つの図面",
+    keywords: ["図面", "4つ", "種類", "設置場所見取図", "平面図", "配線ルート図", "電気系統図", "交付申請", "審査", "提出"],
+    content: `
+      <p>交付申請には、以下の<strong>4種類の図面</strong>が必要です。</p>
+      <table>
+        <tr><th>#</th><th>図面名</th><th>内容</th><th>審査ポイント</th></tr>
+        <tr><td>1</td><td><strong>設置場所見取図</strong></td><td>施設全体の地図。Googleマップのキャプチャをベースに充電スペースと案内板の位置を記載</td><td>施設と充電設備の位置関係、公道からの経路・案内板の位置</td></tr>
+        <tr><td>2</td><td><strong>平面図</strong></td><td>駐車場の拡大図。充電器の位置、車室寸法、路面表示などをA3/1:100で正確に記載</td><td>充電設備の詳細レイアウト、寸法・設置方法の確認</td></tr>
+        <tr><td>3</td><td><strong>配線ルート図</strong></td><td>電源から充電器までの配線経路。配管の種類・長さ・設置方法を1本1本記載</td><td>配線費用の妥当性、配線経路の合理性</td></tr>
+        <tr><td>4</td><td><strong>電気系統図</strong></td><td>電気の接続関係を示す系統図。ブレーカー仕様、配線種、接地線などを記載</td><td>専用配線であること、電気容量の適切さ</td></tr>
+      </table>
+      <div class="info-box"><strong>共通ルール:</strong> 全図面の基本情報欄 → 設置場所＝「施設正式名称＋普通充電設備設置工事」、作成者＝「ENECHANGE EVラボ株式会社」、作成日＝ミラエネ指定日</div>
+    `
+  },
+  {
+    chapter: 1, page: 5, title: "作図業務の流れ",
+    keywords: ["フロー", "流れ", "手順", "ステップ", "情報収集", "設計判断", "作図", "提出", "Salesforce", "ポータル", "優先順位", "現調報告書", "仕様書"],
+    content: `
+      <div class="section-label">4つのSTEP</div>
+      <table>
+        <tr><th>STEP</th><th>内容</th><th>詳細</th></tr>
+        <tr><td><strong>1. 情報収集</strong></td><td>案件情報を確認</td><td>Salesforce(ポータル)から案件情報確認、現調報告書・現調資料を読み込む、充電器用途(目的地/基礎)を確認</td></tr>
+        <tr><td><strong>2. 設計判断</strong></td><td>設計内容を決定</td><td>仕様書に基づき設計内容を決定、充電器の種類・台数・設置方法を確認、配線ルート・電源取得方法を確認</td></tr>
+        <tr><td><strong>3. 作図</strong></td><td>4つの図面を作成</td><td>CADテンプレートを使って作成、本マニュアルのチェック項目を確認、統括表との整合性を確認</td></tr>
+        <tr><td><strong>4. 提出・修正</strong></td><td>アップロード</td><td>ポータルへ図面をアップロード、不備指摘があれば修正し再提出、交付決定を待つ</td></tr>
+      </table>
+      <div class="note-box"><strong>情報の優先順位（とても重要！）</strong><br>原則：<strong>現調報告書 ＞ 標準設計仕様書</strong> の順に優先。<br>ただし一部の項目（配管径、電線、ブレーカー仕様など）は「★仕様書優先」と明記されています。各ページの右上に「★現調報告書優先」「★仕様書優先」と記載があるので必ず確認してください。</div>
+    `
+  },
+
+  // ===== CHAPTER 2 =====
+  {
+    chapter: 2, page: 7, title: "設計の3つの原則",
+    keywords: ["設計", "原則", "3ない", "コスト", "掘削", "架空", "コア抜き", "法令", "最小限", "仕様見直し"],
+    content: `
+      <div class="section-label">原則1: コスト最小の設計 ─「3ない設計」</div>
+      <ul>
+        <li><strong>掘らない</strong>（掘削しない）</li>
+        <li><strong>飛ばさない</strong>（架空配線しない）</li>
+        <li><strong>貫通しない</strong>（コア抜きしない）</li>
+      </ul>
+      <p>工事・材料の原価は最小限に。ただし法令順守は絶対。</p>
+      <div class="section-label">原則2: 必要最低限の設備設置</div>
+      <ul>
+        <li>歩行者動線に被る場合は掘削・プロテクタを検討</li>
+        <li>意匠性・安全性・利用促進性のバランス</li>
+        <li>やむを得ない場合のみ追加工事を計画する</li>
+      </ul>
+      <div class="section-label">原則3: 継続的な仕様見直し</div>
+      <ul>
+        <li>R8-1の最新仕様を必ず確認</li>
+        <li>過去の案件のコピーは使わない</li>
+        <li>常に最新の標準設計仕様書を参照すること</li>
+      </ul>
+      <div class="note-box"><strong>注意:</strong> 関連法令 ─ 建築基準法、電気事業法、電気工事士法、内線規程、消防法など。法令違反は絶対にNG。</div>
+    `
+  },
+  {
+    chapter: 2, page: 8, title: "充電器の種類と設置方法",
+    keywords: ["充電器", "種類", "6kW", "3kW", "Zerova", "ABB", "Panasonic", "壁掛け", "スタンド", "設置方法", "基礎", "置き基礎", "埋設", "アンカー", "デュアル", "スリム", "下部"],
+    content: `
+      <div class="section-label">6kW 普通充電器（目的地向け）</div>
+      <table>
+        <tr><th>タイプ</th><th>メーカー</th><th>型式</th><th>特徴</th></tr>
+        <tr><td>壁掛け</td><td>Zerova / ABB</td><td>AWSJ600001T1 / TAC-W6-P8-R-C-JPN</td><td>原則壁面設置可能な場合はこちら。GL+1200以上の高さに設置</td></tr>
+        <tr><td>デュアルスタンド</td><td>Zerova / ABB</td><td>同上</td><td>2口付き。偶数台設置に最適</td></tr>
+        <tr><td>スリムスタンド</td><td>Zerova / ABB</td><td>同上</td><td>1口付き。アンカー直打ちのみの場合</td></tr>
+        <tr><td>下部スタンド</td><td>Zerova のみ</td><td>AWSJ600001T1S</td><td>優先利用。ABB製は設置不可</td></tr>
+      </table>
+      <div class="section-label">3kW コンセント（基礎充電向け）</div>
+      <table>
+        <tr><th>タイプ</th><th>メーカー</th><th>型式</th><th>特徴</th></tr>
+        <tr><td>壁掛け</td><td>Panasonic</td><td>WK4322B</td><td>原則壁面設置可能な場合はこちら</td></tr>
+        <tr><td>コンセントスタンド(1口正面)</td><td>Panasonic</td><td>WK4322B</td><td>スタンド設置。寒冷地・積雪地は基礎有り</td></tr>
+      </table>
+      <div class="section-label">設置方法の選び方</div>
+      <ul>
+        <li><strong>壁掛け可能？ → YES：壁掛けを最優先</strong></li>
+        <li>アスファルト → 置き基礎(原則)</li>
+        <li>コンクリート → アンカー直打ち</li>
+        <li>土・砂利 → 埋設基礎</li>
+        <li>タイル → 置き基礎(原則)</li>
+        <li>寒冷地 → 埋設基礎</li>
+      </ul>
+      <div class="section-label">基礎サイズ</div>
+      <ul>
+        <li>6kW 置き基礎：500x500xH120</li>
+        <li>6kW 埋設基礎：400x400xH500</li>
+        <li>3kW 置き基礎：360x360xH75</li>
+        <li>3kW 埋設基礎：400x400xH500</li>
+        <li>寒冷地埋設：400x400xH800</li>
+      </ul>
+    `
+  },
+  {
+    chapter: 2, page: 9, title: "車室の選定基準",
+    keywords: ["車室", "選定", "基準", "寸法", "幅", "奥行", "NG", "身障者", "縦列", "機械式", "軽専用", "軽車室", "規定"],
+    content: `
+      <p>充電スペースとして選定できる車室には寸法の最低基準があります。</p>
+      <div class="section-label">目的地の車室寸法基準</div>
+      <table>
+        <tr><th></th><th>敷地外（公道側）</th><th>敷地内</th></tr>
+        <tr><td><strong>奥行</strong></td><td>NG: 5000mm未満 / OK: 5000mm以上</td><td>NG: 4800mm未満 / OK: 4800mm以上</td></tr>
+        <tr><td><strong>車室幅</strong></td><td>NG: 2500mm未満 / OK: 2500mm以上</td><td>NG: 2300mm未満 / OK: 2300mm以上</td></tr>
+      </table>
+      <div class="section-label">基礎充電の車室寸法基準</div>
+      <table>
+        <tr><th></th><th>敷地外（公道側）</th><th>敷地内</th></tr>
+        <tr><td><strong>奥行</strong></td><td>3600mm未満NG / 3600~4999mm注釈要 / 5000mm以上OK</td><td>3600mm未満NG / 3600~4499mm注釈要 / 4500mm以上OK</td></tr>
+        <tr><td><strong>車室幅</strong></td><td>2000mm未満NG / 2000~2499mm注釈要 / 2500mm以上OK</td><td>2000mm未満NG / 2000~2299mm注釈要 / 2300mm以上OK</td></tr>
+      </table>
+      <div class="tip-box"><strong>基礎充電で規定寸法未満の場合:</strong> SF項目「駐車場特記事項」で軽車室情報を確認し、①旗揚げ「軽専用」 または ②注釈「駐車可能なサイズの車両運用」を記載</div>
+      <div class="note-box"><strong>設置NGの例:</strong> 身障者用車室、縦列車室（目的地）、機械式駐車場、車路上、搬入口前、消防車進入路</div>
+    `
+  },
+
+  // ===== CHAPTER 3 =====
+  {
+    chapter: 3, page: 11, title: "設置場所見取図の作成ポイント",
+    keywords: ["設置場所見取図", "見取図", "チェックリスト", "案内板", "ハッチング", "充電スペース", "公道", "出入口", "Googleマップ", "収容台数", "基礎充電", "特殊"],
+    content: `
+      <div class="section-label">チェックリスト（10項目）</div>
+      <ol>
+        <li>施設の全体像（建物・駐車場・公道）が描かれているか</li>
+        <li>充電スペースの位置が<strong>赤いハッチング</strong>で示されているか</li>
+        <li>充電スペースの台数が「充電スペース×○」で記載されているか</li>
+        <li>収容台数が記載されているか（基礎充電の場合）</li>
+        <li>公道名が記載されているか</li>
+        <li>出入口の位置が記載されているか</li>
+        <li>公道から充電設備まで到達できる出入口を全て記載しているか</li>
+        <li>【目的地のみ】案内板の位置・仕様・設置方法が記載されているか</li>
+        <li>【目的地のみ】路面表示の場所がわかるか</li>
+        <li>【基礎】居住者専用以外の車室があれば×印と旗揚げがあるか</li>
+      </ol>
+      <div class="section-label">案内板のルール（目的地のみ）</div>
+      <ul>
+        <li>サイズ：<strong>500mm x 500mm 以上</strong></li>
+        <li>設置：公道に対し<strong>両面/垂直 or 片面/並行</strong></li>
+        <li>公道の上下線から視認できる位置・高さ</li>
+        <li>環境色対応の要否はSF欄を確認</li>
+        <li>既設案内板がある場合：流用/撤去/残置/移設 を確認し旗揚げ</li>
+      </ul>
+      <div class="section-label">基礎充電の特殊ルール</div>
+      <ul>
+        <li><strong>店舗用・事務所用スペース</strong>がある場合 → 車室に×印と旗揚げ、収容台数から除外</li>
+        <li><strong>駐車場を共同利用</strong>している場合 → 一点鎖線で区画を明確に分ける</li>
+        <li><strong>事業所</strong>（SF用途「基礎充電(事業所)」）→ 社有車用・従業員用を区別して旗揚げ、来客用は×印</li>
+      </ul>
+    `
+  },
+
+  // ===== CHAPTER 4 =====
+  {
+    chapter: 4, page: 13, title: "平面図のチェックリスト",
+    keywords: ["平面図", "チェックリスト", "縮尺", "A3", "充電設備", "シンボル", "車室", "赤枠", "車止め", "方位", "寸法", "バリカー"],
+    content: `
+      <div class="section-label">基本情報</div>
+      <ul>
+        <li>設置場所＝「施設正式名称＋普通充電設備設置工事」</li>
+        <li>図面名称＝「平面図」</li>
+        <li>作成者＝「ENECHANGE EVラボ株式会社」</li>
+        <li>縮尺＝「<strong>A3:1/100</strong>」</li>
+        <li>作成日＝ミラエネ指定日</li>
+      </ul>
+      <div class="section-label">充電設備</div>
+      <ul>
+        <li>充電設備シンボルと<strong>▲（正面）マーク</strong>があるか</li>
+        <li>充電設備の位置関係がわかる寸法があるか</li>
+        <li>設置方法・基礎のサイズ・路面状況は合っているか</li>
+      </ul>
+      <div class="section-label">充電スペース</div>
+      <ul>
+        <li>充電スペースの寸法（<strong>赤枠</strong>）が記載されているか</li>
+        <li>赤枠は充電設備の前面以降を起点とし、シンボルと被らないか</li>
+        <li>車止めがある場合の位置関係寸法が記載されているか</li>
+      </ul>
+      <div class="section-label">その他確認</div>
+      <ul>
+        <li>分電盤やブレーカー等の不要な情報が記載されていないか</li>
+        <li>既設充電設備がある場合は位置とスペースが図示されているか</li>
+        <li>バリカー・駐輪場など構築物は記載されているか（残置/撤去も記載）</li>
+        <li>図面右上に<strong>方位</strong>が記載されているか</li>
+      </ul>
+      <div class="section-label">目的地のみ</div>
+      <ul>
+        <li>仕様書の選定基準を満たす車室サイズか</li>
+        <li>縦列車室は含まれていないか</li>
+        <li>路面表示が原則車室中央に配置されているか</li>
+        <li>路面表示の旗揚げ「新設 900x900(路面状況)」があるか</li>
+      </ul>
+      <div class="info-box"><strong>車止めの新設ルール:</strong> 充電設備中心～既設車止め前面が白線上1075mm未満/車室背面1200mm未満の場合→新設。ただし前面車路が5m以下になる場合→新設しない。</div>
+    `
+  },
+  {
+    chapter: 4, page: 14, title: "路面表示のルール（目的地のみ）",
+    keywords: ["路面表示", "EV200V", "ラバー", "シール", "新設", "入替", "撤去", "残置", "豪雪", "目的地", "商標", "東京電力", "900"],
+    content: `
+      <p>目的地案件では東京電力商標デザイン（EV200V）の路面表示（<strong>900x900以上</strong>）が必須です。</p>
+      <div class="section-label">4つのパターン</div>
+      <table>
+        <tr><th>#</th><th>パターン</th><th>条件</th><th>旗揚げ記載</th></tr>
+        <tr><td>1</td><td><strong>新設</strong></td><td>既設路面表示なし → 新規で設置</td><td>路面表示 新設 900x900 (路面状況：○○)</td></tr>
+        <tr><td>2</td><td><strong>入替</strong></td><td>既設の上から新規をそのまま貼れる場合</td><td>路面表示 入替 900x900 (路面状況：○○)</td></tr>
+        <tr><td>3</td><td><strong>撤去+新設</strong></td><td>既設を撤去して新規設置</td><td>路面表示 撤去+新設 900x900 (路面状況：○○)</td></tr>
+        <tr><td>4</td><td><strong>既設残置</strong></td><td>既設が要件適合（900x900以上・商標デザイン）</td><td>路面表示 残置 900x900 (路面状況：○○)</td></tr>
+      </table>
+      <div class="section-label">仕様の選び方</div>
+      <table>
+        <tr><th>仕様</th><th>対象</th></tr>
+        <tr><td>ラバータイプ(900x900)</td><td>アスファルト・コンクリート・土・砂利 等</td></tr>
+        <tr><td>シールタイプ(900x900)</td><td>豪雪地帯＋屋外＋アスファルト/コンクリート面</td></tr>
+        <tr><td>代替路面表示</td><td>インターロッキング・タイル等（個別判断）</td></tr>
+      </table>
+      <div class="section-label">既設路面表示の扱い</div>
+      <ul>
+        <li><strong>軽表示・身障者マーク</strong>：目的地→残置可能だが原則避ける / 基礎→残置可能だが原則避ける</li>
+        <li><strong>EVマーク（非商標）</strong>：目的地→<strong>撤去必須</strong> / 基礎→残置可能</li>
+      </ul>
+      <div class="info-box"><strong>豪雪地帯:</strong> 北海道、東北全県、栃木、群馬、新潟、富山、石川、福井、山梨、長野、岐阜、静岡、京都、滋賀、兵庫、鳥取、島根、岡山、広島（一部地域）</div>
+    `
+  },
+
+  // ===== CHAPTER 5 =====
+  {
+    chapter: 5, page: 16, title: "配線ルート図のチェックリスト",
+    keywords: ["配線ルート図", "チェックリスト", "配線", "配管", "旗揚げ", "統括表", "プルボックス", "建柱", "掘削", "ハッチング", "埋設", "方位", "分電盤", "電源盤", "盤"],
+    content: `
+      <div class="section-label">基本情報</div>
+      <ul>
+        <li>設置場所＝「施設正式名称＋普通充電設備設置工事」、図面名称＝「配線ルート図」</li>
+        <li>作成者・縮尺(A3:1/100)・作成日が記載されているか</li>
+      </ul>
+      <div class="section-label">充電設備・盤</div>
+      <ul>
+        <li>充電設備シンボルと▲(正面)マークがあるか</li>
+        <li>電源盤・分電盤が図示され、名称が<strong>電気系統図と一致</strong>しているか</li>
+        <li>盤の取付方法の図面表記と旗揚げの文言が一致しているか</li>
+        <li><strong>盤寸法は記載されていないか（記載NG）</strong></li>
+        <li>充電設備の採番は電気の流れと一致しているか</li>
+      </ul>
+      <div class="section-label">配線・配管</div>
+      <ul>
+        <li>配線と配管が図示されているか（<strong>直線毎に長さを記載</strong>）</li>
+        <li>配線配管方法（架空・露出・埋設）が正しいか</li>
+        <li><strong>立上げ・立下げ</strong>を記載しているか</li>
+        <li>配管配線方法・数量が旗揚げと統括表で一致しているか</li>
+      </ul>
+      <div class="section-label">その他</div>
+      <ul>
+        <li>プルボックスがある場合は図表・番号・サイズが記載されているか</li>
+        <li>建柱(引込柱)・受電点の位置が図示されているか</li>
+        <li>掘削がある場合は<strong>ハッチング(紫orオレンジor緑)</strong>が記載されているか</li>
+        <li>盤・電力量計の設置位置がブロック塀やフェンスではないか</li>
+        <li>図面右上に方位が記載されているか</li>
+      </ul>
+      <div class="note-box"><strong>重要:</strong> 配線配管長は合理的な説明ができるもののみを計上。過剰な余長は補助金の不正受給とみなされます。例：7m柱の立下げは5mが上限。</div>
+      <div class="info-box"><strong>埋設ハッチング色:</strong> アスファルト・コンクリート→<strong>紫</strong>、土・砂利→<strong>緑</strong>、プロテクター→<strong>オレンジ</strong></div>
+    `
+  },
+  {
+    chapter: 5, page: 17, title: "配線配管長の標準数量",
+    keywords: ["配線配管長", "標準", "数量", "7m柱", "立下げ", "立上げ", "余長", "統括表", "旗揚げ", "書き方", "記載", "PFD", "HIVE", "FEP", "プルボックス", "PB"],
+    content: `
+      <p>7m柱の標準配管長を基準とします。過度な余長はNEVから不備指摘を受けます。</p>
+      <div class="section-label">標準配管長（CVT幹線）</div>
+      <table>
+        <tr><th>配線区間</th><th>標準配管</th><th>数量(m)</th></tr>
+        <tr><td>責任分界点余長</td><td>露出</td><td>1</td></tr>
+        <tr><td>立下げ</td><td>HIVE or PFD等</td><td>5 (7m柱)</td></tr>
+        <tr><td>電力量計内配線</td><td>露出</td><td>1</td></tr>
+        <tr><td>盤間接続（横引き）</td><td>PFD等可とう管</td><td>2</td></tr>
+        <tr><td>分電盤内配線</td><td>露出</td><td>2</td></tr>
+      </table>
+      <div class="section-label">接地線（IV5.5sq等）</div>
+      <table>
+        <tr><th>配線区間</th><th>標準配管</th><th>数量(m)</th></tr>
+        <tr><td>分電盤内配線</td><td>露出</td><td>1</td></tr>
+        <tr><td>立下げ</td><td>HIVE or PFD等</td><td>2</td></tr>
+      </table>
+      <div class="section-label">柱高さ別の立下げ数量</div>
+      <table>
+        <tr><th>柱高さ</th><th>立下げ</th><th>増減</th></tr>
+        <tr><td>H=6000</td><td>4m</td><td>-1m</td></tr>
+        <tr><td><strong>H=7000（基準）</strong></td><td><strong>5m</strong></td><td>基準</td></tr>
+        <tr><td>H=8000</td><td>6m</td><td>+1m</td></tr>
+        <tr><td>H=9000</td><td>7m</td><td>+2m</td></tr>
+      </table>
+      <div class="section-label">統括表と旗揚げの書き方</div>
+      <ul>
+        <li><strong>旗揚げの記載順序</strong>（上から下へ）：①種別用途：露出配線 → 露出配線架空 → 露出配管 → 露出配管架空 → 埋設配管</li>
+        <li>②配管種・口径（昇順）：PFD → HIVE → G → PV → FEP</li>
+        <li><strong>統括表の記載例：</strong>「合成樹脂 露出 PFD-○○ (共入れ3)  10m  30m」← 配管種/配管長/合計配線長</li>
+        <li>プルボックス図表：①新設→既設 ②採番は昇順で記載。PBとスタンドの離隔は500mm(芯〜芯)で統一</li>
+      </ul>
+    `
+  },
+
+  // ===== CHAPTER 6 =====
+  {
+    chapter: 6, page: 19, title: "電気系統図のチェックリスト",
+    keywords: ["電気系統図", "系統図", "チェックリスト", "ブレーカー", "ELB", "MCCB", "配電方法", "接地", "ED", "LB", "デマンドコントロール", "同時稼働", "主幹", "分岐", "予備ブレーカー", "既設予備"],
+    content: `
+      <div class="section-label">目的地（6kW）の確認項目</div>
+      <ul>
+        <li>充電設備の仕様(普通)/メーカー名/型式を記載</li>
+        <li>配電方法の種類（例：1Φ3W 100/200V）を記載</li>
+        <li>盤名称が配線ルート図と一致しているか</li>
+        <li>受電元〜充電設備の配線種（例：CVT22sq）を記載</li>
+        <li>ブレーカー仕様（例：ELB2P2E）と容量（例：50AF/40AT）を記載</li>
+        <li>接地配線・接地種別(ED等)・アース線(IV5.5sq)を記載</li>
+        <li>LB時は「※デマンドコントロール機能〜」の注釈があるか</li>
+        <li>新規/特例引込の場合、分電盤にメーカー名と型式を記載</li>
+        <li>「各ブレーカーにおいて、必要な電気容量確保確認済み」の注釈</li>
+      </ul>
+      <div class="section-label">基礎（3kW）の追加確認項目</div>
+      <table>
+        <tr><th>台数</th><th>同時稼働台数</th><th>主幹ブレーカー</th><th>幹線</th></tr>
+        <tr><td>~10台</td><td>2台</td><td>50AT</td><td>CVT22sq</td></tr>
+        <tr><td>11~15台</td><td>3台</td><td>75AT</td><td>CVT22sq</td></tr>
+        <tr><td>16~20台</td><td>4台</td><td>100AT</td><td>CVT38sq</td></tr>
+      </table>
+      <div class="section-label">既存受電元のブレーカー表記（重要）</div>
+      <table>
+        <tr><th>種類</th><th>説明</th><th>表記</th></tr>
+        <tr><td><strong>既設予備ブレーカー</strong></td><td>既に設置されているものを流用 or 施設側手配。発注不要・補助対象外</td><td>黒表記</td></tr>
+        <tr><td><strong>予備ブレーカー</strong></td><td>新たに設置するが補助対象外。発注要。他用途配線がある場合 or SF停電有無「あり」の場合</td><td>黒表記</td></tr>
+        <tr><td><strong>通常の赤表記ブレーカー</strong></td><td>補助対象内。発注要。上記いずれにも該当しない場合</td><td>赤表記</td></tr>
+      </table>
+    `
+  },
+
+  // ===== CHAPTER 7 =====
+  {
+    chapter: 7, page: 21, title: "リプレイス案件・既設充電設備がある場合",
+    keywords: ["リプレイス", "既設", "撤去", "入替", "2ページ", "流用", "残置", "他用途", "補助対象", "建柱", "スキーム", "支線", "設計風速"],
+    content: `
+      <div class="section-label">リプレイス案件の基本ルール</div>
+      <p>既設充電設備がある場合、図面は<strong>2ページ構成</strong>になります：</p>
+      <ul>
+        <li><strong>1ページ目：</strong>新設情報（平面図 / 配線ルート図 / 電気系統図）</li>
+        <li><strong>2ページ目：</strong>既設情報（既設 平面図 / 既設 配線ルート図 / 既設 電気系統図）</li>
+      </ul>
+      <p><strong>撤去と新設の設置場所による表記の違い：</strong></p>
+      <ul>
+        <li>設置場所が<strong>異なる</strong>場合 → 既設充電設備を「（撤去）」として表記</li>
+        <li>設置場所が<strong>同一</strong>の場合 → 既設充電設備を「（入替）」として表記</li>
+      </ul>
+      <div class="section-label">既設配線の流用・撤去・残置</div>
+      <ul>
+        <li><strong>配線配管共に既設流用</strong> → 旗揚げに「既設流用」と記載。統括表にも記載</li>
+        <li><strong>配線新設、配管のみ既設流用</strong> → 配管は「既設流用」、配線は通常通り新設として記載</li>
+        <li>現調資料に配線数量・配管種等の記載がない場合は省略可（流用の場合は不可）</li>
+      </ul>
+      <div class="section-label">他用途配線の補助金対象判断</div>
+      <div class="note-box"><strong>基本の考え方:</strong>「補助対象の充電設備の為に設置したもののみが補助対象」<br><br><strong>他用途とは：</strong>今年度設置する充電設備と、その充電設備を照らす電灯以外の全て。<br>充電設備の配線上に他用途のものが繋がっている場合、ブレーカーや配線が「他用途の為のもの」と判断され補助対象外となることがあります。</div>
+      <div class="section-label">建柱スキームについて</div>
+      <p>新規/特例引込で建柱する場合、<strong>支線の有無は建柱スキーム（スプレッドシート）</strong>で判定します。</p>
+      <ul>
+        <li>主な入力項目：①設計風速（SF住所の市区町村から基準風速を確認）②引込距離 ③電柱仕様 ④ケーブル弛度率(原則3%固定)</li>
+        <li>判定結果がOKなら支線を採用。全てNGなら根本的な設計見直しが必要→質疑</li>
+      </ul>
+    `
+  },
+
+  // ===== CHAPTER 8 =====
+  {
+    chapter: 8, page: 23, title: "6kW 幹線の配線・配管選定表",
+    keywords: ["6kW", "配線", "配管", "選定", "幹線", "ブレーカー", "MCCB", "ELB", "CVT", "CV8sq", "PFD", "HIVE", "FEP", "G管", "LB", "ロードバランシング", "系統", "分離", "共入れ", "デュアル"],
+    content: `
+      <p>新規/特例引込の場合の幹線。分電盤→充電器は全て<strong>CV8sq-3C</strong>。★仕様書優先</p>
+      <div class="section-label">6kW 幹線選定表</div>
+      <table>
+        <tr><th>設置台数(LBなし)</th><th>LBあり台数</th><th>主幹BL</th><th>AF/AT</th><th>幹線(新規引込)</th><th>PFD</th><th>HIVE</th><th>FEP</th><th>G管</th></tr>
+        <tr><td>1</td><td>-</td><td>ELB 3P3E</td><td>50AF/40AT</td><td>CV8sq-3C</td><td>28</td><td>28</td><td>30</td><td>28</td></tr>
+        <tr><td>2</td><td>-</td><td>MCCB 2P2E</td><td>100AF/75AT</td><td>CVT22sq</td><td>36</td><td>36</td><td>40</td><td>36</td></tr>
+        <tr><td>3</td><td>4~6</td><td>MCCB 3P3E</td><td>100AF/100AT</td><td>CVT38sq</td><td>54</td><td>54</td><td>-</td><td>42</td></tr>
+        <tr><td>4</td><td>5~8</td><td>MCCB 3P3E</td><td>150AF/125AT</td><td>CVT38sq</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+        <tr><td>5</td><td>6~10</td><td>MCCB 3P3E</td><td>150AF/150AT</td><td>CVT60sq</td><td>54</td><td>54</td><td>50</td><td>54</td></tr>
+        <tr><td>6</td><td>7~13</td><td>MCCB 3P3E</td><td>225AF/200AT</td><td>CVT100sq</td><td>-</td><td>70</td><td>65</td><td>70</td></tr>
+        <tr><td>7</td><td>8~15</td><td>MCCB 3P3E</td><td>250AF/225AT</td><td>CVT100sq</td><td>-</td><td>70</td><td>65</td><td>70</td></tr>
+      </table>
+      <div class="note-box"><strong>重要ルール:</strong>
+        <ul>
+          <li>【基礎】3台以上は全てLB(ロードバランシング)として設計</li>
+          <li>【目的地】原則3台以上LB。現調資料の指示に従う（現調優先）</li>
+          <li><strong>8台以上はブレーカー入手性を鑑み、2系統に分離する</strong></li>
+          <li>分岐ブレーカーは全てELB 2P2E 50AF/40AT</li>
+          <li>LB率50%以上が原則。やむを得ない場合でも33%以上を確保</li>
+        </ul>
+      </div>
+      <div class="section-label">6kW 分岐配管の共入れ</div>
+      <table>
+        <tr><th>共入れ本数</th><th>分電盤→PB</th><th>備考</th></tr>
+        <tr><td>1本</td><td>PFD-28</td><td></td></tr>
+        <tr><td>2本</td><td>PFD-36</td><td></td></tr>
+        <tr><td>3本</td><td>PFD-54 / HIVE-54</td><td></td></tr>
+        <tr><td>4本</td><td>FEP-50 / G-54</td><td></td></tr>
+      </table>
+      <p>PB→充電器（デュアルスタンド）：PFD-36 or FEP-40 で共入れ可。指定なき場合は共入れを優先。</p>
+    `
+  },
+  {
+    chapter: 8, page: 24, title: "新設分電盤/電源盤 メーカー名と型式一覧",
+    keywords: ["分電盤", "電源盤", "型式", "型番", "メーカー", "日東工業", "OAS", "OR", "ORU", "OPEB", "ケースイン", "選定表"],
+    content: `
+      <p>新規/特例引込時の分電盤・電源盤の選定表。全て<strong>日東工業</strong>製。</p>
+      <div class="section-label">6kW / 9.6kW</div>
+      <table>
+        <tr><th>主幹BLサイズ</th><th>分電盤 型番</th><th>電源盤 型番</th></tr>
+        <tr><td>50AF/40AT(ケースイン)</td><td>OPEB60E 3P 40A</td><td>OPEB60E 3P 40A</td></tr>
+        <tr><td>60AF/60AT(ケースイン)</td><td>OPEB60E 3P 60A</td><td>OPEB60E 3P 60A</td></tr>
+        <tr><td>50AF/40AT (2P2E)</td><td>OAS16-24C</td><td>OR16-34C</td></tr>
+        <tr><td>100AF/75AT (2P2E)</td><td>OAS16-24C</td><td>OR16-34C</td></tr>
+        <tr><td>50AF/40AT (3P3E)</td><td>OR16-56C</td><td>OR16-34C</td></tr>
+        <tr><td>100AF/75AT (3P3E)</td><td>OR16-57C</td><td>OR16-34C</td></tr>
+        <tr><td>100AF/100AT</td><td>OR16-57C</td><td>OR16-34C</td></tr>
+        <tr><td>150AF/125AT~150AT</td><td>OR16-58C</td><td>OR16-34C</td></tr>
+        <tr><td>225AF/175AT~225AT</td><td>ORU20-511C</td><td>OR20-45C</td></tr>
+        <tr><td>250AF/250AT</td><td>OR20-512C</td><td>OR20-45C</td></tr>
+      </table>
+      <div class="section-label">3kW</div>
+      <table>
+        <tr><th>主幹BLサイズ</th><th>分電盤 型番</th><th>電源盤 型番</th></tr>
+        <tr><td>50AF/50AT</td><td>OR16-46C</td><td>OPEB60N 3P 50A</td></tr>
+        <tr><td>100AF/75AT</td><td>OR16-46C</td><td>OR16-34C</td></tr>
+        <tr><td>100AF/100AT</td><td>OR16-47C</td><td>OR16-34C</td></tr>
+      </table>
+      <div class="section-label">配管種選定の基本ルール</div>
+      <ul>
+        <li><strong>優先順位:</strong></li>
+        <li>①建柱の立下げ・立上げ・盤間接続 → PFDを選定</li>
+        <li>②直線2.0m以下 → PFD管 / 2.0m超 → HIVE管</li>
+        <li><strong>特殊条件:</strong></li>
+        <li>FEP管 → 埋設の場合</li>
+        <li>配管なし → ケーブルラック or 架空配線</li>
+        <li>G管 → 人が踏む場所 or 耐火区画貫通</li>
+        <li>配管色 → 躯体・外壁の近似色を選定（環境色対応地域は環境色に合わせる）</li>
+      </ul>
+    `
+  },
+
+  // ===== CLOSING =====
+  {
+    chapter: 0, page: 25, title: "作図のポイントまとめ（7箇条）",
+    keywords: ["まとめ", "ポイント", "7箇条", "整合性", "チェック", "質疑", "補助金対象"],
+    content: `
+      <ol>
+        <li><strong>まず案件の充電器用途（目的地 / 基礎）を確認する</strong></li>
+        <li><strong>現調報告書と仕様書の優先順位を常に意識する</strong></li>
+        <li><strong>4つの図面間で情報の整合性を保つ</strong>（盤名称・採番・配線種など）</li>
+        <li><strong>チェックリストを1項目ずつ確認してから提出する</strong></li>
+        <li><strong>不明点は質疑として差し戻す。推測で作図しない</strong></li>
+        <li><strong>配線配管長は合理的な説明ができるもののみ計上する</strong></li>
+        <li><strong>補助金対象内外の区別を正確に行う</strong></li>
+      </ol>
+    `
+  },
+];
+
+// ===========================================================
+// SEARCH ENGINE
+// ===========================================================
+function tokenize(text) {
+  text = text.toLowerCase()
+    .replace(/[<>{}()\[\]"'`\/\\;:=&|^~#@$%]+/g, ' ')
+    .replace(/[？?！!。、,.\s]+/g, ' ')
+    // Split on Japanese particles (の, と, は, を, に, が, で, から, まで, より)
+    .replace(/(..)の(?=..)/g, '$1 ')
+    .replace(/(..)と(?=..)/g, '$1 ')
+    .replace(/(..)は(?=..)/g, '$1 ')
+    .replace(/(..)を(?=..)/g, '$1 ')
+    .replace(/(..)に(?=..)/g, '$1 ')
+    .replace(/(..)が(?=..)/g, '$1 ')
+    .replace(/(..)で(?=..)/g, '$1 ')
+    .replace(/(..)から(?=..)/g, '$1 ')
+    .trim();
+  const tokens = text.split(/\s+/).filter(t => t.length > 0);
+  // Also add the original query as a single token for phrase matching
+  const original = text.replace(/\s+/g, '');
+  // Only add concatenated form for Japanese text (prevents XSS string concatenation matching)
+  if (original.length > 0 && tokens.length > 1 && /[^\x00-\x7F]/.test(original)) {
+    tokens.push(original);
+  }
+  return [...new Set(tokens)];
+}
+
+function searchSections(query) {
+  // Filter: require 2+ chars, and for pure ASCII tokens require 3+ chars
+  // Also filter out common XSS/injection patterns
+  const xssStopWords = new Set(['img','src','onerror','alert','script','iframe','svg','onload',
+    'onclick','onmouseover','onfocus','eval','document','cookie','window','drop','table',
+    'select','insert','delete','update','union','exec','fetch','xmlhttp','href','action',
+    'form','input','body','head','meta','link','style','div','span','sections']);
+  const tokens = tokenize(query).filter(t => {
+    if (t.length < 2) return false;
+    if (/^[a-z0-9]+$/.test(t) && t.length < 3) return false;
+    if (/^[a-z]+$/.test(t) && xssStopWords.has(t)) return false;
+    // Filter tokens that are just punctuation/symbols leftovers
+    if (/^[-_]+$/.test(t)) return false;
+    return true;
+  });
+  if (tokens.length === 0) return [];
+
+  // Generate sub-tokens for long compound words (e.g., ケーブルプロテクター → ケーブル, プロテクター)
+  // Only for tokens containing Japanese characters
+  const subTokens = [];
+  tokens.forEach(t => {
+    if (t.length >= 6 && /[^\x00-\x7F]/.test(t)) {
+      for (let len = 3; len <= Math.min(t.length - 2, 6); len++) {
+        subTokens.push(t.substring(0, len));
+        subTokens.push(t.substring(t.length - len));
+      }
+    }
+  });
+  const allTokens = [...new Set([...tokens, ...subTokens])];
+
+  const results = SECTIONS.map(section => {
+    let score = 0;
+    const titleLower = section.title.toLowerCase();
+    const keywordsStr = section.keywords.join(' ').toLowerCase();
+    const contentText = section.content.replace(/<[^>]+>/g, '').toLowerCase();
+    const allText = titleLower + ' ' + keywordsStr + ' ' + contentText;
+
+    // Primary tokens (full weight)
+    tokens.forEach(token => {
+      if (token.length === 0) return;
+      // Title match (highest weight)
+      if (titleLower.includes(token)) score += 30;
+      // Keyword exact match
+      section.keywords.forEach(kw => {
+        if (kw.toLowerCase() === token) score += 25;
+        else if (kw.toLowerCase().includes(token) && token.length >= 2) score += 15;
+        else if (token.includes(kw.toLowerCase()) && kw.length >= 2) score += 10;
+      });
+      // Content match (generous)
+      if (token.length >= 2) {
+        const contentMatches = (contentText.match(new RegExp(escapeRegex(token), 'g')) || []).length;
+        score += Math.min(contentMatches * 4, 25);
+      }
+    });
+
+    // Sub-tokens (lower weight for fuzzy matching)
+    subTokens.forEach(st => {
+      if (allText.includes(st)) score += 5;
+    });
+
+    // Bonus for multi-token match (all primary tokens found somewhere)
+    if (tokens.length > 1) {
+      const allFound = tokens.every(t => allText.includes(t));
+      if (allFound) score += 25;
+    }
+
+    return { ...section, score };
+  });
+
+  return results
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score);
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function highlightText(html, tokens) {
+  let result = html;
+  tokens.forEach(token => {
+    if (token.length < 2) return;
+    const regex = new RegExp(`(?<![<\\/\\w])${escapeRegex(token)}(?![\\w>])`, 'gi');
+    // Only highlight in text nodes, not inside HTML tags
+    result = result.replace(/>([^<]+)</g, (match, text) => {
+      const highlighted = text.replace(
+        new RegExp(escapeRegex(token), 'gi'),
+        '<span class="highlight">$&</span>'
+      );
+      return '>' + highlighted + '<';
+    });
+  });
+  return result;
+}
+
+function getChapter(num) {
+  if (num === 0) return { num: 0, title: "まとめ", color: "#1B2A4A" };
+  return CHAPTERS.find(c => c.num === num) || { num: 0, title: "", color: "#64748B" };
+}
+
+// ===========================================================
+// UI
+// ===========================================================
+function doSearch() {
+  const input = document.getElementById('searchInput');
+  const query = input.value.trim();
+  if (!query) {
+    document.getElementById('results').innerHTML = `
+      <div class="welcome">
+        <div class="welcome-icon">&#128270;</div>
+        <h2>マニュアルに質問してみましょう</h2>
+        <p>キーワードや質問文を入力すると、該当するページの内容を関連度順に表示します。上のタグをクリックするとすぐに検索できます。</p>
+      </div>`;
+    return;
+  }
+
+  const tokens = tokenize(query);
+  const results = searchSections(query);
+  const container = document.getElementById('results');
+
+  if (results.length === 0) {
+    container.innerHTML = `
+      <div class="welcome">
+        <div class="welcome-icon">&#128533;</div>
+        <h2>該当するページが見つかりませんでした</h2>
+        <p>別のキーワードで検索してみてください。例：「路面表示」「ブレーカー」「車室 基準」など</p>
+      </div>
+    `;
+    return;
+  }
+
+  renderResults(results, tokens);
+}
+
+function renderResults(results, tokens, label) {
+  const container = document.getElementById('results');
+  const maxResults = 8;
+  const shown = results.slice(0, maxResults);
+  const countLabel = label || `${results.length}件中 ${shown.length}件を表示（関連度順）`;
+
+  let html = `<div class="result-count">${countLabel}</div>`;
+
+  shown.forEach(r => {
+    const ch = getChapter(r.chapter);
+    const chLabel = r.chapter > 0 ? `CHAPTER ${r.chapter} ─ ${ch.title}` : 'まとめ';
+    const content = highlightText(r.content, tokens || []);
+
+    html += `
+      <div class="result-card">
+        <div class="result-header" onclick="this.parentElement.querySelector('.result-body').style.display = this.parentElement.querySelector('.result-body').style.display === 'none' ? 'block' : 'none'">
+          <div class="result-badge" style="background:${ch.color}">P${r.page}</div>
+          <div class="result-meta">
+            <div class="result-chapter" style="color:${ch.color}">${chLabel}</div>
+            <div class="result-title">${r.title}</div>
+          </div>
+          <div class="result-score">関連度 ${r.score}</div>
+        </div>
+        <div class="result-body">
+          ${content}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function quickSearch(el) {
+  document.getElementById('searchInput').value = el.textContent;
+  doSearch();
+}
+
+// Enter key
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// TOC
+function toggleTOC() {
+  document.getElementById('tocPanel').classList.toggle('open');
+  document.getElementById('tocOverlay').classList.toggle('open');
+}
+
+function buildTOC() {
+  const container = document.getElementById('tocContent');
+  let html = '';
+  CHAPTERS.forEach(ch => {
+    html += `<div class="toc-chapter">
+      <div class="toc-chapter-title" onclick="document.getElementById('searchInput').value=''; quickSearchChapter(${ch.num})">
+        <span class="toc-chapter-dot" style="background:${ch.color}"></span>
+        Chapter ${ch.num}: ${ch.title}
+      </div>`;
+    SECTIONS.filter(s => s.chapter === ch.num).forEach(s => {
+      html += `<div class="toc-section" onclick="quickSearchSection('${s.title.replace(/'/g, "\\'")}')">&bull; P${s.page} ${s.title}</div>`;
+    });
+    html += '</div>';
+  });
+  // まとめ
+  html += `<div class="toc-chapter">
+    <div class="toc-chapter-title" onclick="quickSearchSection('作図のポイントまとめ')">
+      <span class="toc-chapter-dot" style="background:#1B2A4A"></span>
+      まとめ（7箇条）
+    </div>
+  </div>`;
+  container.innerHTML = html;
+}
+
+function quickSearchChapter(num) {
+  const ch = CHAPTERS.find(c => c.num === num);
+  const sections = SECTIONS.filter(s => s.chapter === num).map(s => ({ ...s, score: 100 }));
+  document.getElementById('searchInput').value = '';
+  renderResults(sections, [], `Chapter ${num} ─ ${ch.title}（${sections.length}ページ）`);
+  toggleTOC();
+}
+
+function quickSearchSection(title) {
+  const section = SECTIONS.find(s => s.title === title);
+  if (section) {
+    document.getElementById('searchInput').value = '';
+    renderResults([{ ...section, score: 100 }], [], `${section.title}`);
+  }
+  toggleTOC();
+}
+
+buildTOC();
+</script>
+</body>
+</html>
